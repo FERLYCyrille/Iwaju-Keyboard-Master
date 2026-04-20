@@ -3,7 +3,7 @@ Comment ça marche ? (Architecture Dual-Device)
 Le projet génère une seule application, mais propose deux interfaces distinctes selon l'URL consultée. La communication entre les deux est assurée par le moteur temps réel de Supabase.
 1. L'interface TV (L'hôte)
 
-    URL : https://ton-projet.vercel.app/ (Route par défaut)
+    URL : https://projet.vercel.app/ (Route par défaut)
 
     Rôle : Elle agit comme le centre de contrôle et le moteur du jeu.
 
@@ -11,7 +11,7 @@ Le projet génère une seule application, mais propose deux interfaces distincte
 
 2. L'interface Mobile (La manette)
 
-    URL : https://ton-projet.vercel.app/remote
+    URL : https://projet.vercel.app/remote
 
     Rôle : Elle sert de contrôleur distant (Clavier & D-Pad).
 
