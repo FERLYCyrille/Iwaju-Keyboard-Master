@@ -112,11 +112,11 @@ const Keyboard = ({ roomCode }) => {
             flexGrow: isSpace ? 3 : isSpecial ? 1.4 : 1,
             flexBasis: '0',
             minWidth: isSpace ? '60px' : isSpecial ? '32px' : '0',
-            height: 'clamp(36px, 5.5vh, 50px)',
+            height: 'clamp(44px, 7vh, 62px)',
             borderRadius: '7px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             gap: '3px',
-            fontSize: isSpace ? '9px' : isSpecial ? '10px' : 'clamp(11px, 1.6vw, 15px)',
+            fontSize: isSpace ? '11px' : isSpecial ? '12px' : 'clamp(13px, 2vw, 17px)',
             fontWeight: active || isShiftActive ? 700 : 500,
             letterSpacing: isSpace ? '0.08em' : '0',
             // ✅ textTransform supprimé — c'est renderLabel qui gère la casse
