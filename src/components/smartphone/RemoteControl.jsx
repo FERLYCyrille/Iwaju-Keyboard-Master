@@ -72,7 +72,7 @@ const RemoteControl = () => {
                     marginTop: 20,
                     padding: '12px 24px',
                     borderRadius: 10,
-                    background: '#00f0ff',
+                    background: '#5715a2',
                     border: 'none',
                     fontWeight: 600
                 }}
