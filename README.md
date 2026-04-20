@@ -1,16 +1,26 @@
-# React + Vite
+Comment ça marche ? (Architecture Dual-Device)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Le projet génère une seule application, mais propose deux interfaces distinctes selon l'URL consultée. La communication entre les deux est assurée par le moteur temps réel de Supabase.
+1. L'interface TV (L'hôte)
 
-Currently, two official plugins are available:
+    URL : https://ton-projet.vercel.app/ (Route par défaut)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+    Rôle : Elle agit comme le centre de contrôle et le moteur du jeu.
 
-## React Compiler
+    Action : Au chargement, elle génère un code de session unique (ex: 8X2-F9Q) et écoute en continu les modifications sur la base de données. Dès qu'une action est détectée, la TV met à jour l'interface instantanément.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. L'interface Mobile (La manette)
 
-## Expanding the ESLint configuration
+    URL : https://ton-projet.vercel.app/remote
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+    Rôle : Elle sert de contrôleur distant (Clavier & D-Pad).
+
+    Action : L'utilisateur entre le code affiché sur la TV pour lier les deux appareils. Une fois connecté, chaque pression sur une touche envoie une mise à jour ultra-rapide vers le serveur.
+
+3. Le flux de données (Realtime)
+
+    Mobile → Envoie la touche pressée via une requête sécurisée.
+
+    Cloud → Diffuse l'événement en moins de 100ms.
+
+    TV → Reçoit l'information, valide la saisie et anime le texte en direct.
