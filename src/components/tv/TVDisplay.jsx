@@ -4,11 +4,26 @@ import { generateRoomCode } from '../../utils/generateCode';
 
 const TVDisplay = () => {
     const phrases = useMemo(() => [
-        "IWAJU TECH EST LE FUTUR",
-        "LE DEVELOPPEMENT WEB EST UN ART",
-        "REACT ET SUPABASE SONT PUISSANTS",
-        "LA PROGRAMMATION DEMANDE DE LA RIGUEUR",
-        "LE CODE PROPRE EST DURABLE"
+        "Iwaju Tech est le futur.",
+        "Le développement web est un art.",
+        "React et Supabase sont puissants.",
+        "La programmation demande de la rigueur.",
+        "Le code propre est durable.",
+        "Un bon développeur apprend chaque jour.",
+        "La persévérance fait la différence.",
+        "Le travail en équipe améliore les projets.",
+        "Comprendre avant de coder est essentiel.",
+        "Les erreurs font partie de l’apprentissage.",
+        "La logique est la base de tout programme.",
+        "Un projet bien structuré est plus facile à maintenir.",
+        "La pratique régulière améliore les compétences.",
+        "Un bon design rend une application agréable.",
+        "La simplicité est souvent la meilleure solution.",
+        "Tester son code évite beaucoup de problèmes.",
+        "La curiosité pousse à progresser.",
+        "Chaque bug est une opportunité d’apprendre.",
+        "Le développement demande du temps et de la patience.",
+        "Un code lisible est un code utile."
     ], []);
 
     const [roomCode, setRoomCode] = useState(null);
@@ -328,7 +343,7 @@ const TVDisplay = () => {
                     <svg style={{ width: 'clamp(12px, 1.2vw, 18px)', height: 'clamp(12px, 1.2vw, 18px)', flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 12a9 9 0 1 0 2.25-5.85" /><path d="M3 6v6h6" />
                     </svg>
-                    <span className="hidden sm:inline">Restart Session</span>
+                    <span className="hidden sm:inline">Changer de phrase</span>
                     <span className="sm:hidden">Restart</span>
                 </button>
             </div>
