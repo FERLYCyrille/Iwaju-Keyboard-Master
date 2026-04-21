@@ -74,8 +74,12 @@ const Keyboard = ({ roomCode }) => {
         e.preventDefault();
 
         // Vibration immédiate au toucher
-        if (navigator.vibrate) navigator.vibrate(30);
-
+        if ('vibrate' in navigator) {
+            const result = navigator.vibrate(200);
+            alert("Support: true | Vibrate: " + result);
+        } else {
+            alert("Support: false");
+        }
         // Layer toggle
         if (val === '123') { setLayer('num'); return; }
         if (val === 'ABC') { setLayer('alpha'); return; }
