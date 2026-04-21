@@ -75,10 +75,7 @@ const Keyboard = ({ roomCode }) => {
 
         // Vibration immédiate au toucher
         if ('vibrate' in navigator) {
-            const result = navigator.vibrate(200);
-            alert("Support: true | Vibrate: " + result);
-        } else {
-            alert("Support: false");
+            navigator.vibrate(200);
         }
         // Layer toggle
         if (val === '123') { setLayer('num'); return; }
