@@ -56,7 +56,6 @@ const TVDisplay = () => {
                 .from('sessions')
                 .insert([{ room_code: code, game_state: { status: 'waiting', wpm: 0 } }]);
             if (!error) { setRoomCode(code); setLoading(false); }
-            else console.error("Erreur d'initialisation:", error);
         };
         initSession();
     }, [phrases]);
@@ -72,73 +71,39 @@ const TVDisplay = () => {
     const handleInput = useCallback((char) => {
         const key = char.toUpperCase();
 
-        // 🔍 LOG 1: RÉCEPTION BRUTE
-        console.log(`%c 📥 Entrée handleInput: ${char} (Normalisée: ${key}) `, "background: #333; color: #fbbf24; font-weight: bold;");
-        console.log(`%c 🕹️ État actuel: game=${gameState} | focusedBtn=${focusedButton} | restartFocused=${restartFocused}`, "color: #94a3b8;");
-
-        // --- LOGIQUE FIN DE PARTIE ---
         if (gameState === 'finished') {
             if (['LEFT', 'RIGHT', 'UP', 'DOWN'].includes(key)) {
-                console.log("✅ FIN: Changement de focus bouton (0/1)");
                 setFocusedButton(p => (p === 0 ? 1 : 0));
             } else if (key === 'OK') {
-                console.log(`✅ FIN: Validation OK sur bouton ${focusedButton}`);
                 focusedButton === 0 ? resetGame() : window.location.reload();
-            } else {
-                console.log(`❌ FIN: Touche ${key} ignorée dans cet état.`);
             }
             return;
         }
 
-        // --- LOGIQUE EN JEU ---
         if (gameState === 'playing') {
-            // Navigation D-Pad pendant le jeu
             if (['UP', 'DOWN'].includes(key)) {
-                console.log(`✅ JEU: Basculement focus Restart (était: ${restartFocused})`);
                 setRestartFocused(p => !p);
                 return;
             }
-
             if (key === 'OK') {
-                if (restartFocused) {
-                    console.log("✅ JEU: Restart validé via OK");
-                    resetGame();
-                } else {
-                    console.log("❌ JEU: OK pressé mais le focus n'est pas sur Restart");
-                }
+                if (restartFocused) resetGame();
                 return;
             }
-
-            if (['LEFT', 'RIGHT'].includes(key)) {
-                console.log("❌ JEU: Gauche/Droite ignorés pendant la frappe.");
-                return;
-            }
-
-            // Logique de frappe (lettres)
-            console.log(`⌨️ JEU: Tentative de frappe de "${char}"...`);
+            if (['LEFT', 'RIGHT'].includes(key)) return;
 
             setTotalCharsTyped(p => p + 1);
             setCurrentIndex((prevIndex) => {
                 const expectedChar = targetText[prevIndex];
-
                 if (char === expectedChar) {
-                    console.log(`%c ✨ BRAVO: "${char}" est correct !`, "color: #10b981; font-weight: bold;");
                     const nextIndex = prevIndex + 1;
-
                     if (prevIndex === 0 && !startTime) setStartTime(Date.now());
-
                     if (startTime) {
                         const minutes = (Date.now() - startTime) / 60000;
                         setWpm(Math.round((nextIndex / 5) / minutes) || 0);
                     }
-
-                    if (nextIndex === targetText.length) {
-                        console.log("🏁 JEU: Phrase terminée !");
-                        setGameState('finished');
-                    }
+                    if (nextIndex === targetText.length) setGameState('finished');
                     return nextIndex;
                 } else {
-                    console.log(`%c ⚠️ ERREUR: Reçu "${char}", attendu "${expectedChar}"`, "color: #ef4444;");
                     if (char !== '⌫') setErrors(p => p + 1);
                     return prevIndex;
                 }
@@ -155,16 +120,11 @@ const TVDisplay = () => {
                 filter: `room_code=eq.${roomCode}`
             }, (payload) => {
                 const key = payload.new.last_keypress;
-
-                // 🟢 LOG DE RÉCEPTION PC
-                console.log(`%c 📥 TOUCHE REÇUE SUR PC: ${key}`, "color: #00f0ff; font-weight: bold; background: #222; padding: 3px 10px; border-radius: 5px;");
-                console.log("Détails du payload:", payload.new);
                 if (key) handleInput(key);
             }).subscribe();
         return () => supabase.removeChannel(channel);
     }, [roomCode, handleInput]);
 
-    // ── LOADING ──
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center" style={{ background: '#050508' }}>
             <p className="text-sm sm:text-base font-semibold uppercase tracking-widest" style={{ color: '#7d859b' }}>
@@ -173,7 +133,6 @@ const TVDisplay = () => {
         </div>
     );
 
-    // ── FIN DE PARTIE ──
     if (gameState === 'finished') {
         return (
             <div
@@ -258,7 +217,6 @@ const TVDisplay = () => {
         );
     }
 
-    // ── JEU EN COURS ──
     return (
         <div
             className="min-h-screen flex flex-col"
@@ -270,7 +228,6 @@ const TVDisplay = () => {
         >
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'radial-gradient(circle at 50% 50%, rgba(0,240,255,0.03) 0%, transparent 50%)' }} />
 
-            {/* HEADER */}
             <div
                 className="flex items-center justify-between relative z-10 flex-wrap gap-3"
                 style={{ padding: 'clamp(16px, 4vw, 40px) clamp(16px, 5vw, 60px)' }}
@@ -303,7 +260,6 @@ const TVDisplay = () => {
                 </div>
             </div>
 
-            {/* PHRASE */}
             <div className="flex-1 flex items-center justify-center relative z-10 px-4 sm:px-8 md:px-16" style={{ padding: '0 clamp(16px, 8vw, 100px)' }}>
                 <div
                     className="font-medium text-center"
@@ -342,7 +298,6 @@ const TVDisplay = () => {
                 </div>
             </div>
 
-            {/* FOOTER */}
             <div
                 className="flex items-center justify-between relative z-10 flex-wrap gap-4"
                 style={{
@@ -374,7 +329,6 @@ const TVDisplay = () => {
                     ))}
                 </div>
 
-                {/* Restart Button */}
                 <button
                     onClick={resetGame}
                     className="flex items-center gap-2 sm:gap-3 rounded-xl font-semibold uppercase tracking-wider cursor-none transition-all duration-200"

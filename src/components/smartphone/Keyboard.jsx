@@ -63,7 +63,7 @@ const Keyboard = ({ roomCode }) => {
     const rows = layer === 'alpha' ? alphaRows : numRows;
 
     const sendAction = async (value) => {
-        console.log("📱 Mobile: Envoi de la touche ->", value);
+        console.log("Mobile: Envoi de la touche ->", value);
         const { error } = await supabase
             .from('sessions')
             .update({ last_keypress: value, created_at: new Date().toISOString() })
@@ -91,7 +91,7 @@ const Keyboard = ({ roomCode }) => {
         setActiveKey(val);
         setTimeout(() => setActiveKey(null), 120);
 
-        // Determine what to send
+
         let toSend = val;
         if (layer === 'alpha' && val !== '⌫' && val !== 'RETURN' && val !== ' ') {
             toSend = capsMode ? val.toUpperCase() : val.toLowerCase();
@@ -121,7 +121,7 @@ const Keyboard = ({ roomCode }) => {
             fontSize: isSpace ? '11px' : isSpecial ? '12px' : 'clamp(13px, 2vw, 17px)',
             fontWeight: active || isShiftActive ? 700 : 500,
             letterSpacing: isSpace ? '0.08em' : '0',
-            // ✅ textTransform supprimé — c'est renderLabel qui gère la casse
+            // textTransform supprimé — c'est renderLabel qui gère la casse
             touchAction: 'none', cursor: 'pointer',
             transition: 'all 0.08s ease',
             background: isShiftActive
@@ -151,7 +151,7 @@ const Keyboard = ({ roomCode }) => {
         if (char === ' ') return 'Space';
         if (char === '123') return '123';
         if (char === 'ABC') return 'ABC';
-        // ✅ Affichage en minuscule ou majuscule selon capsMode
+        //  Affichage en minuscule ou majuscule selon capsMode
         if (layer === 'alpha' && char.length === 1) {
             return capsMode ? char.toUpperCase() : char.toLowerCase();
         }
