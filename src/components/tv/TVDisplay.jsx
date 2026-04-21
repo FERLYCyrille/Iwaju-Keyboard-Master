@@ -70,34 +70,81 @@ const TVDisplay = () => {
     }, [phrases]);
 
     const handleInput = useCallback((char) => {
+        const key = char.toUpperCase();
+
+        // 🔍 LOG 1: RÉCEPTION BRUTE
+        console.log(`%c 📥 Entrée handleInput: ${char} (Normalisée: ${key}) `, "background: #333; color: #fbbf24; font-weight: bold;");
+        console.log(`%c 🕹️ État actuel: game=${gameState} | focusedBtn=${focusedButton} | restartFocused=${restartFocused}`, "color: #94a3b8;");
+
+        // --- LOGIQUE FIN DE PARTIE ---
         if (gameState === 'finished') {
-            if (['LEFT', 'RIGHT', 'UP', 'DOWN'].includes(char)) setFocusedButton(p => p === 0 ? 1 : 0);
-            if (char === 'OK') { focusedButton === 0 ? resetGame() : window.location.reload(); }
+            if (['LEFT', 'RIGHT', 'UP', 'DOWN'].includes(key)) {
+                console.log("✅ FIN: Changement de focus bouton (0/1)");
+                setFocusedButton(p => (p === 0 ? 1 : 0));
+            } else if (key === 'OK') {
+                console.log(`✅ FIN: Validation OK sur bouton ${focusedButton}`);
+                focusedButton === 0 ? resetGame() : window.location.reload();
+            } else {
+                console.log(`❌ FIN: Touche ${key} ignorée dans cet état.`);
+            }
             return;
         }
+
+        // --- LOGIQUE EN JEU ---
         if (gameState === 'playing') {
-            if (['UP', 'DOWN'].includes(char)) { setRestartFocused(p => !p); return; }
-            if (char === 'OK') { if (restartFocused) { resetGame(); } return; }
-            if (['LEFT', 'RIGHT'].includes(char)) return;
+            // Navigation D-Pad pendant le jeu
+            if (['UP', 'DOWN'].includes(key)) {
+                console.log(`✅ JEU: Basculement focus Restart (était: ${restartFocused})`);
+                setRestartFocused(p => !p);
+                return;
+            }
+
+            if (key === 'OK') {
+                if (restartFocused) {
+                    console.log("✅ JEU: Restart validé via OK");
+                    resetGame();
+                } else {
+                    console.log("❌ JEU: OK pressé mais le focus n'est pas sur Restart");
+                }
+                return;
+            }
+
+            if (['LEFT', 'RIGHT'].includes(key)) {
+                console.log("❌ JEU: Gauche/Droite ignorés pendant la frappe.");
+                return;
+            }
+
+            // Logique de frappe (lettres)
+            console.log(`⌨️ JEU: Tentative de frappe de "${char}"...`);
+
             setTotalCharsTyped(p => p + 1);
             setCurrentIndex((prevIndex) => {
-                if (prevIndex === 0 && !startTime) setStartTime(Date.now());
                 const expectedChar = targetText[prevIndex];
+
                 if (char === expectedChar) {
+                    console.log(`%c ✨ BRAVO: "${char}" est correct !`, "color: #10b981; font-weight: bold;");
                     const nextIndex = prevIndex + 1;
+
+                    if (prevIndex === 0 && !startTime) setStartTime(Date.now());
+
                     if (startTime) {
                         const minutes = (Date.now() - startTime) / 60000;
                         setWpm(Math.round((nextIndex / 5) / minutes) || 0);
                     }
-                    if (nextIndex === targetText.length) setGameState('finished');
+
+                    if (nextIndex === targetText.length) {
+                        console.log("🏁 JEU: Phrase terminée !");
+                        setGameState('finished');
+                    }
                     return nextIndex;
                 } else {
+                    console.log(`%c ⚠️ ERREUR: Reçu "${char}", attendu "${expectedChar}"`, "color: #ef4444;");
                     if (char !== '⌫') setErrors(p => p + 1);
                     return prevIndex;
                 }
             });
         }
-    }, [startTime, targetText, gameState, focusedButton, restartFocused, resetGame]);
+    }, [gameState, focusedButton, restartFocused, startTime, targetText, resetGame]);
 
     useEffect(() => {
         if (!roomCode) return;
@@ -108,6 +155,10 @@ const TVDisplay = () => {
                 filter: `room_code=eq.${roomCode}`
             }, (payload) => {
                 const key = payload.new.last_keypress;
+
+                // 🟢 LOG DE RÉCEPTION PC
+                console.log(`%c 📥 TOUCHE REÇUE SUR PC: ${key}`, "color: #00f0ff; font-weight: bold; background: #222; padding: 3px 10px; border-radius: 5px;");
+                console.log("Détails du payload:", payload.new);
                 if (key) handleInput(key);
             }).subscribe();
         return () => supabase.removeChannel(channel);

@@ -63,6 +63,7 @@ const Keyboard = ({ roomCode }) => {
     const rows = layer === 'alpha' ? alphaRows : numRows;
 
     const sendAction = async (value) => {
+        console.log("📱 Mobile: Envoi de la touche ->", value);
         const { error } = await supabase
             .from('sessions')
             .update({ last_keypress: value, created_at: new Date().toISOString() })
